@@ -8,7 +8,7 @@ object Dependencies {
     "theatr.us"     at "http://repo.theatr.us"
   )
 
-  val akkaV               =       "2.3.6"
+  val akkaV               =       "2.4.0"
   val sprayV              =       "1.3.1"
 
   val sprayCan            =       "io.spray"                        %%  "spray-can"                   % sprayV
@@ -25,7 +25,7 @@ object Dependencies {
   val akkaContrib         =       "com.typesafe.akka"               %%  "akka-contrib"                % akkaV
   val scalaTest           =       "org.scalatest"                   %%  "scalatest"                   % "2.2.1"
   val akkaQuartz          =       "us.theatr"                       %%  "akka-quartz"                 % "0.3.0"
-  val hdrHistogram        =       "org.hdrhistogram"                %   "HdrHistogram"                % "2.0.3"
+  val hdrHistogram        =       "org.hdrhistogram"                %   "HdrHistogram"                % "2.1.7"
   val specs2              =       "org.specs2"          	          %%  "specs2-core"   		          % "2.3.11"
   val mockito             =       "org.mockito"         	          %   "mockito-all"   		          % "1.9.5"
   val cassandraDriver     =       "com.datastax.cassandra"          %   "cassandra-driver-core"       % "2.1.4"

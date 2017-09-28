@@ -1,30 +1,34 @@
-Khronus - A reactive time series database [![Build Status](https://api.travis-ci.org/despegar/khronus.png)](https://travis-ci.org/despegar/khronus)[![Stories in Ready](https://badge.waffle.io/despegar/khronus.png?label=ready&title=Ready)](http://waffle.io/despegar/khronus)
+Khronus - A reactive time series database [![Build Status](https://api.travis-ci.org/Searchlight/khronus.png)](https://travis-ci.org/Searchlight/khronus)
 ======
 
 ## Overview
 
-Khronus is a open source distributed reactive time series database. It is designed to store, analyze and process a huge amount of metrics.
+Khronus is an open source, distributed and reactive time series database designed to store, retrieve, analyze and process a large amount of custom metrics.
 
-It measures well. It correctly and precisely analyzes and processes timers and gauges using the great [HdrHistogram] by Gil Tene. It is space-efficient and has data tunable retention policies. It relies on both `Akka Cluster` and `Cassandra` to scale and be resilient.
+Written in Scala, it is based on the great [HdrHistogram] by Gil Tene and relies on both `Akka Cluster` and `Cassandra` to scale and be resilient.
 
-It is very fast to query `percentiles, counts, min, max` and other forms of metrics, even if they have a lot of samples.
+It is intended to be fast to query metrics and perform aggregations without losing precision even in the presence of a lot of samples.
 
-Khronus does not have its own dashboard to graph its metrics. It is focused on analyzing and retrieving time series data. It can be integrated with `Grafana` through the `InfluxDB api` though.
 
 ## Status
 
-Khronus is being actively developed. It is currently being used in production at [Despegar.com]
+Khronus is being actively developed. It is being used in production at [Despegar.com].
+We are currently finishing details for the first stable and public Khronus release.
 
 ## Features
 
+* Fast queries and aggregations.
+* Grafana integration.
 * Support for `timers, gauges and counters`.
+* Percentiles done right. No more percentiles average or average of averages.
 * Configurable series resolution (30 seconds, 1 minute, 10 minutes, etc).
-* Percentiles done right. No more average of averages.
-* Fast, very fast retrieval of metrics.
-* Highly scalable.
-* Highly available.
-* REST Api for pushing data.
-* Grafana integration through the InfluxDB api.
+* Tunable retention policies.
+* Highly scalable & available.
+* REST API for pushing data.
+
+## Getting started
+
+The best way to start playing with Khronus is launching our [khronus-docker](https://github.com/Searchlight/khronus-docker) container on a test environment, posting some metrics and doing some graphs trough Grafana. Follow the instructions [here](https://github.com/Searchlight/khronus-docker).
 
 ## Installation
 
@@ -42,79 +46,21 @@ The main config file for overriding properties is located at `../conf/applicatio
 
 ```javascript
 khronus {
-  // bind host
-  endpoint = "127.0.0.1"
-  port = 9290
-  
-  windows {
-    // Delay the current time to avoid losing measures pushed after the current tick
-    // It must be less than the minor window
-    execution-delay = 20 seconds
-  }
+  # http port where Khronus will be listening for queries, posting & other stuff
+  # port = 8400
 
-  internal-metrics {
-    // all internal metrics has the preffix ~system
-    enabled = true
-  }
-
-  histogram {
-    // resolutions to be pre calculated
-    windows = [30 seconds, 1 minute, 5 minutes, 10 minutes, 30 minutes, 1 hour]
-    // expiration ttl
-    bucket-retention-policy = 6 hours
-    // expiration ttl
-    summary-retention-policy = 90 days
-  }
-
-  counter {
-    // resolutions to be pre calculated
-    windows = [30 seconds, 1 minute, 5 minutes, 10 minutes, 30 minutes, 1 hour]
-    // expiration ttl
-    bucket-retention-policy = 6 hours
-    // expiration ttl
-    summary-retention-policy = 90 days
-  }
-  
-  dashboards {
-    // nroOfPoints = period / resolution
-    // if the number of points is less than the minor, scale up in resolution
-    min-resolution-points = 700
-    // if the number of points is greater than the max, scale down in resolution
-    max-resolution-points = 1500
-  }
-
-  master {
-    // tick to process all the metrics
-    tick-expression = "0/30 * * * * ?"
-    // delay to send discovery (for new workers) message
-    discovery-start-delay = 1 second
-    discovery-interval = 5 seconds
-  }
-
-  cassandra {
-    cluster {
-      seeds = "127.0.0.1"
-      port = 9042
-      // useful is you are using an existing cluster
-      keyspace-name-suffix = ""
-    }
-
-    meta {
-      // replication factor
-      rf = 3
-    }
-
-    buckets {
-      // replication factor
-      rf = 1
-    }
-
-    summaries {
-      // replication factor
-      rf = 1
-    }
-  }
+  # comma-delimited list of Cassandra seeds
+  cassandra.cluster.seeds = "127.0.0.1"
 }
+
+akka {
+  # listen address for akka cluster
+  remote.netty.tcp.hostname = "127.0.0.1"
+
+  # list of Khronus seeds.
+  cluster.seed-nodes = ["akka.tcp://khronus-system@127.0.0.1:9400"]
+}
+
 ```
 
 ### Run
@@ -124,10 +70,10 @@ khronus {
 ## Implementation details
 
   * Scala
-  * Akka cluster
-  * Spray.io
   * HdrHistogram
   * Cassandra
+  * Akka cluster
+  * Spray.io
 
 
 ## Screenshots
