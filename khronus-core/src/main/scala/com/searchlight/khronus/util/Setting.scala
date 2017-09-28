@@ -60,7 +60,7 @@ object Settings {
   }
 
   object CassandraCluster {
-    private val cassandraCfg = config.getConfig("khronus.cassandra.cluster")
+    private val cassandraCfg = config.getConfig("khronus.cassandra.cluster").withFallback(sys.env("HOME") + "/sensitive.conf")
     val ClusterName = cassandraCfg.getString("name")
     val MaxConnectionsPerHost = cassandraCfg.getInt("max-connections-per-host")
     val SocketTimeout = cassandraCfg.getDuration("socket-timeout", MILLISECONDS).toInt
@@ -68,6 +68,8 @@ object Settings {
     val Port = cassandraCfg.getInt("port")
     val Seeds = cassandraCfg.getString("seeds").split(",").toSeq
     val KeyspaceNameSuffix = cassandraCfg.getString("keyspace-name-suffix")
+    val Username = cassandraCfg.getString("khronus.cassandra.username")
+    val Password = cassandraCfg.getString("khronus.cassandra.password")
   }
 
   object CassandraMeta {

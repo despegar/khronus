@@ -57,7 +57,7 @@ trait CassandraClusterConfiguration {
     withRetryPolicy(retryPolicy).
     withCompression(ProtocolOptions.Compression.SNAPPY).
     withQueryOptions(new QueryOptions().setConsistencyLevel(ConsistencyLevel.ONE))
-
+    withCredentials(settingsCassandra.Username, settingsCassandra.Password)
 }
 
 trait CassandraKeyspace extends Logging with CassandraUtils {
